@@ -12,6 +12,8 @@ import * as format from 'd3-format';
 import * as chroma from 'd3-scale-chromatic';
 import * as array from 'd3-array';
 
+import defaultStyle from '../style/Default'
+
 const d3 = {
     scale, shape, format, chroma, array
 }
@@ -21,7 +23,8 @@ export default class RadarChart extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            color: d3.scale.scaleOrdinal(d3.chroma.schemeSet1),
+            // color: d3.scale.scaleOrdinal(d3.chroma.schemeSet1),
+            color: d3.scale.scaleOrdinal(["#E6B31E"]),
             dimensions: undefined
         };
 
@@ -29,7 +32,6 @@ export default class RadarChart extends React.Component {
         this.total = this.axisData.length;
         this.radius = Math.min(this.width/2, this.height/2);
         
-        //this.Format = d3.format.format('');
         this.sliceAngle = Math.PI * 2 / this.total;
 
         this.dataValues = this.data.map(function(d) { return d.val });
@@ -55,25 +57,19 @@ export default class RadarChart extends React.Component {
         }
     }
 
-    onLayout = event => {
-        if (this.state.dimensions) return
-        let {width, height} = event.nativeEvent.layout
-        this.setState({dimensions: {width, height}})
-    }
-
     // Get Props
     get width() {
         return (
-            this.state.dimensions !== undefined 
-                ? this.state.dimensions.width
+            this.props.width !== undefined 
+                ? this.props.width
                 : 275
         );
     }
 
     get height() {
         return(
-            this.state.dimensions !== undefined 
-                ? this.state.dimensions.height
+            this.props.height !== undefined 
+                ? this.props.height
                 : 275
         );
     }
@@ -146,7 +142,6 @@ export default class RadarChart extends React.Component {
         return(
             this.props.data !== undefined 
                 ? this.props.data
-                //: { Param1: 1, Param2: 2, Param3: 3 }
                 : [{name: 'Param1', val: 1},{name: 'Param2', val: 2},{name: 'Param3', val: 3}]
         );
     }
@@ -156,8 +151,8 @@ export default class RadarChart extends React.Component {
                     class='gridCircle'
                     key={ 'gridCircle-' + index } 
                     r={ this.radius / this.levels * index }
-                    fill='#CDCDCD'
-                    stroke='#CDCDCD'
+                    fill='#cacaca'
+                    stroke='#cacaca'
                     fillOpacity={ this.circleOpacity }
                 />);
     }
@@ -176,8 +171,8 @@ export default class RadarChart extends React.Component {
             class='levelLabel'
             key={ 'levelLabel-' + index }
             x={4}
-            y={ -index * this.radius / this.levels }
-            fill='#737373'
+            y={ -index * this.radius / this.levels - 2}
+            fill='#fcfaf1'
             fontSize='10px'>
                 { 
                     // this.Format(this.maxValue * index 
@@ -250,6 +245,8 @@ export default class RadarChart extends React.Component {
                 key={ 'axisTitle-' + index }
                 fontSize='13px'
                 textAnchor='middle'
+                fill='#fcfaf1'
+                
                 dy='0.35em'
                 x={ this.rScale(this.maxValue * labelFactor)
                     * Math.cos(this.sliceAngle * index - (Math.PI / 2)) }    
@@ -353,17 +350,14 @@ export default class RadarChart extends React.Component {
 
     render() {
         return(
-            <View style={defaultStyle.radarChart} onLayout={this.onLayout}>
-                <Svg
-                    style={{ flex: 1 }} 
-                    width={ this.width + this.margin.left 
-                            + this.margin.right }
-                    height={ this.height + this.margin.top 
-                        + this.margin.bottom }
+            <View style={defaultStyle.radarChart}>
+                <Svg 
+                    width='100%'
+                    height='100%'
+                    viewBox = '-200 -200 400 400'
+                    preserveAspectRatio='xMidYMid meet'
                     class='radarChart'>
-                        <G transform={{ translate: '' + 
-                                    (this.width / 2 + this.margin.left) 
-                                    + ',' + (this.height / 2 + this.margin.top) }}>
+                        <G>
                             { this.createRadarChart() }
                         </G>
                 </Svg>
