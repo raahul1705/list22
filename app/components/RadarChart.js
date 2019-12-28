@@ -62,7 +62,7 @@ export default class RadarChart extends React.Component {
         return (
             this.props.width !== undefined 
                 ? this.props.width
-                : 275
+                : 300
         );
     }
 
@@ -70,7 +70,7 @@ export default class RadarChart extends React.Component {
         return(
             this.props.height !== undefined 
                 ? this.props.height
-                : 275
+                : 300
         );
     }
 
@@ -246,7 +246,7 @@ export default class RadarChart extends React.Component {
                 fontSize='13px'
                 textAnchor='middle'
                 fill='#fcfaf1'
-                
+                fontFamily='SquareFont'
                 dy='0.35em'
                 x={ this.rScale(this.maxValue * labelFactor)
                     * Math.cos(this.sliceAngle * index - (Math.PI / 2)) }    
@@ -345,6 +345,7 @@ export default class RadarChart extends React.Component {
         this.setupDataBlobs(groups);
         this.setupBlobOutlines(groups);
         this.setupDataPoints(groups);
+    
         return groups;
     }
 
@@ -352,12 +353,25 @@ export default class RadarChart extends React.Component {
         return(
             <View style={defaultStyle.radarChart}>
                 <Svg 
-                    width='100%'
-                    height='100%'
-                    viewBox = '-200 -200 400 400'
-                    preserveAspectRatio='xMidYMid meet'
+                    width={this.width + this.margin.left + this.margin.right}
+                    height={this.height + this.margin.top + this.margin.bottom}
+                    
+                    // width='100%'
+                    // height='100%'
+
+                    // viewBox = '0 0 500 500'
+                    // viewBox = '-150 -150 500 500'
+                    viewBox = {'0 0 ' + (this.width + this.margin.left + this.margin.right)
+                        + ' ' + (this.height + this.margin.top + this.margin.bottom)}
+
+                    // preserveAspectRatio='xMidYMid meet'
+                    
                     class='radarChart'>
-                        <G>
+                        <G
+                        transform={{ translate: '' + 
+                        (this.width/2 + this.margin.left) 
+                        + ',' + (this.height / 2 + this.margin.top) }}
+                        >
                             { this.createRadarChart() }
                         </G>
                 </Svg>
